@@ -31,3 +31,14 @@ function validationErrorMessagesToArray($errors){
 function random_prefix_generator_for_image(){
     return Str::random(10);
 }
+
+function get_user_id_from_token()
+{
+    try {
+        $user = JWTAuth::parseToken()->authenticate();
+    } catch (Exception $e) {
+        return "error";
+    }
+    return $user->id;
+}
+

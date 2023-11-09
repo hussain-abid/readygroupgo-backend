@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassesController;
 use App\Http\Controllers\CustomPromptController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\MainCategories;
@@ -39,7 +40,18 @@ Route::group([
     'middleware' => 'jwt.verify',
 ], function ($router) {
 
-    Route::get('/classes', [AuthController::class, 'complete_profile']);
+    Route::get('/classes', [ClassesController::class, 'get_classes']);
+    Route::get('/class-details/{id}', [ClassesController::class, 'get_students']);
+
+    Route::put('/add-class', [ClassesController::class, 'add_class']);
+    Route::put('/add-student/{class_id}', [ClassesController::class, 'add_student_details']);
+
+    Route::post('/update-class/{class_id}', [ClassesController::class, 'update_class']);
+    Route::post('/update-student/{student_id}', [ClassesController::class, 'update_class_student']);
+
+    Route::delete('/delete-class/{class_id}', [ClassesController::class, 'delete_class']);
+
+    Route::post('/delete-students', [ClassesController::class, 'delete_students']); //its post as the delete method dont have access to the body
 });
 
 Route::get('/php-info', function (){
