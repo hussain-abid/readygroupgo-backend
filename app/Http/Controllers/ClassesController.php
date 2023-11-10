@@ -43,13 +43,22 @@ class ClassesController extends Controller
         return response()->json($response, 200);
 
     }
-    public function get_students(){
+    public function get_students($class_id){
 
 
         $response=(object)[];
 
-        $class_ids=UserClass::where('user_id',$this->user_id)->pluck('id');
-        $students=UserClassStudents::whereIn('class_id',$class_ids)->get();
+        $valid_class=$this->is_this_user_class($class_id);
+
+        if(!$valid_class)
+        {
+            $errors=[
+                'errors'=>['This Class Doesn\'t belongs to this user']
+            ];
+            return response()->json($errors, 400);
+        }
+
+        $students=UserClassStudents::where('class_id',$class_id)->get();
         $response->students=$students;
         return response()->json($response, 200);
 
@@ -70,12 +79,46 @@ class ClassesController extends Controller
             return response()->json($errors, 400);
         }
 
-        UserClass::create([
+
+        if($request->has('students'))
+        {
+            $validator = Validator::make($request->all(), [
+                "students"    => "required|array",
+                "students.*"  => "required|string|distinct",
+            ]);
+            if($validator->fails()){
+                $errors=[
+                    'errors'=>validationErrorMessagesToArray($validator->errors())
+                ];
+                return response()->json($errors, 400);
+            }
+
+        }
+
+        $class=UserClass::create([
             'user_id'=>$this->user_id,
             'name'=>$request->get('name')
         ]);
 
+        if($request->has('students'))
+        {
+
+            $students=$request->get('students');
+
+            foreach ($students as $each_student)
+            {
+                UserClassStudents::create([
+                    'class_id'=>$class->id,
+                   'person_name'=>$each_student
+                ]);
+            }
+        }
+
+
+
         $response->message='Class Created';
+//        $response->class=$class;
+//        $response->class_id=$class->id;
 
         return response()->json($response, 200);
 
