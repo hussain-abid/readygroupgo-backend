@@ -43,25 +43,46 @@ class ClassesController extends Controller
         return response()->json($response, 200);
 
     }
-    public function get_students($class_id){
 
-
+    private function get_students_helper($class_id)
+    {
         $response=(object)[];
+        $response->code=200;
 
         $valid_class=$this->is_this_user_class($class_id);
 
+
         if(!$valid_class)
         {
+
             $errors=[
                 'errors'=>['This Class Doesn\'t belongs to this user']
             ];
-            return response()->json($errors, 400);
+            $response->code=400;
+            $response->errors=$errors;
+            return $response;
         }
 
-        $students=UserClassStudents::where('class_id',$class_id)->get();
-        $response->students=$students;
-        return response()->json($response, 200);
 
+        $class_details=UserClass::where('user_id',$this->user_id)
+            ->where('id',$class_id)->first();
+
+        $students=UserClassStudents::where('class_id',$class_id)->get();
+
+
+        $response->students=$students;
+        $response->class_details=$class_details;
+
+        return $response;
+    }
+    public function get_students($class_id){
+
+        $response=$this->get_students_helper($class_id);
+
+        if($response->code==400)
+            return response()->json($response->errors, $response->code);
+        else
+            return response()->json($response, $response->code);
     }
 
     public function add_class(Request $request){
@@ -109,7 +130,7 @@ class ClassesController extends Controller
             {
                 UserClassStudents::create([
                     'class_id'=>$class->id,
-                   'person_name'=>$each_student
+                    'person_name'=>$each_student
                 ]);
             }
         }
@@ -117,6 +138,7 @@ class ClassesController extends Controller
 
 
         $response->message='Class Created';
+
 //        $response->class=$class;
 //        $response->class_id=$class->id;
 
@@ -128,6 +150,13 @@ class ClassesController extends Controller
 
         $response=(object)[];
 
+        $default_type='text';
+
+        if($request->has('type')){
+            if($request->get('type')=='array')
+                $default_type='aray';
+        }
+
         $valid_class=$this->is_this_user_class($class_id);
 
         if(!$valid_class)
@@ -138,31 +167,57 @@ class ClassesController extends Controller
             return response()->json($errors, 400);
         }
 
-        $validator = Validator::make($request->all(), [
-            'person_name' => 'required|string',
-        ]);
-        if($validator->fails()){
-            $errors=[
-                'errors'=>validationErrorMessagesToArray($validator->errors())
+        if($default_type=='text')
+        {
+
+            $validator = Validator::make($request->all(), [
+                'person_name' => 'required|string',
+            ]);
+            if($validator->fails()){
+                $errors=[
+                    'errors'=>validationErrorMessagesToArray($validator->errors())
+                ];
+                return response()->json($errors, 400);
+            }
+
+            $create=[
+                'class_id'=>$class_id,
+                'person_name'=>$request->get('person_name')
             ];
-            return response()->json($errors, 400);
+
+            if($request->has('attr_1')) $create['attr_1']= $request->get('attr_1');
+            if($request->has('attr_2')) $create['attr_2']= $request->get('attr_2');
+            if($request->has('attr_3')) $create['attr_3']= $request->get('attr_3');
+
+            UserClassStudents::create($create);
+
+            $response->message='Class Student Added';
+
         }
 
-        $create=[
-            'class_id'=>$class_id,
-            'person_name'=>$request->get('person_name')
-        ];
+        else{
+            $validator = Validator::make($request->all(), [
+                "students"    => "required|array",
+                "students.*"  => "required|string|distinct",
+            ]);
+            if($validator->fails()){
+                $errors=[
+                    'errors'=>validationErrorMessagesToArray($validator->errors())
+                ];
+                return response()->json($errors, 400);
+            }
+            $all_students=$request->get('students');
+            foreach ($all_students as $each_student)
+            {
+                UserClassStudents::create([
+                    'class_id'=>$class_id,
+                    'person_name'=>$each_student
+                ]);
+            }
+        }
 
-        if($request->has('attr_1')) $create['attr_1']= $request->get('attr_1');
-        if($request->has('attr_2')) $create['attr_2']= $request->get('attr_2');
-        if($request->has('attr_3')) $create['attr_3']= $request->get('attr_3');
-
-        UserClassStudents::create($create);
-
-        $response->message='Class Student Added';
-
+        $response->class=$this->get_students_helper($class_id);
         return response()->json($response, 200);
-
     }
 
     public function delete_class($class_id){
