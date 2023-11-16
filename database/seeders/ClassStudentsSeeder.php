@@ -20,10 +20,20 @@ class ClassStudentsSeeder extends Seeder
         UserClassStudents::create(
             [
                 'class_id'=>1,
-                'person_name'=>'ABC',
+                'person_name'=>'John',
                 'attr_1'=>'A',
                 'attr_2'=>'B',
                 'attr_3'=>'C',
+            ]);
+
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Adam',
+                'attr_1'=>'',
+                'attr_2'=>'',
+                'attr_3'=>'',
             ]);
 
         UserClassStudents::create(
