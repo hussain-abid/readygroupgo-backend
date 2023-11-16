@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->string('name')->nullable();
+            $table->string('attr1')->default('Attr 1');
+            $table->string('attr2')->default('Attr 2');
+            $table->string('attr3')->default('Attr 3');
             $table->timestamps();
         });
     }
