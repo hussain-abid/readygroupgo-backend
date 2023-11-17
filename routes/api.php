@@ -50,6 +50,7 @@ Route::group([
     Route::post('/update-class/{class_id}', [ClassesController::class, 'update_class']);
     Route::post('/update-student/{student_id}', [ClassesController::class, 'update_class_student']);
 
+
     Route::delete('/delete-class/{class_id}', [ClassesController::class, 'delete_class']);
 
     Route::post('/delete-students', [ClassesController::class, 'delete_students']); //its post as the delete method dont have access to the body

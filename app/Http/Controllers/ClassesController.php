@@ -25,8 +25,7 @@ class ClassesController extends Controller
 
     private function is_this_user_class($class_id){
 
-        $result=UserClassStudents::where('class_id',$class_id)
-            ->leftJoin('user_classes','class_id','user_classes.id')
+        $result=UserClass::where('id',$class_id)
             ->where('user_id',$this->user_id)
             ->first();
 
@@ -283,19 +282,22 @@ class ClassesController extends Controller
         }
 
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-        ]);
-        if($validator->fails()){
-            $errors=[
-                'errors'=>validationErrorMessagesToArray($validator->errors())
-            ];
-            return response()->json($errors, 400);
-        }
+//        $validator = Validator::make($request->all(), [
+//            'name' => 'required|string',
+//        ]);
+//        if($validator->fails()){
+//            $errors=[
+//                'errors'=>validationErrorMessagesToArray($validator->errors())
+//            ];
+//            return response()->json($errors, 400);
+//        }
 
-        UserClass::where('id',$class_id)->update([
-            'name'=>$request->get('name')
-        ]);
+        if($request->has('attr1')) $update['attr1']= $request->get('attr1');
+        if($request->has('attr2')) $update['attr2']= $request->get('attr2');
+        if($request->has('attr3')) $update['attr3']= $request->get('attr3');
+        if($request->has('name')) $update['name']= $request->get('name');
+
+        UserClass::where('id',$class_id)->update($update);
 
         $response->message='Class Updated';
 
