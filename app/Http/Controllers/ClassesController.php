@@ -43,6 +43,30 @@ class ClassesController extends Controller
         return response()->json($response, 200);
 
     }
+    public function get_single_class($class_id){
+
+        $response=(object)[];
+        $valid_class=$this->is_this_user_class($class_id);
+
+
+        if(!$valid_class)
+        {
+
+            $errors=[
+                'errors'=>['This Class Doesn\'t belongs to this user']
+            ];
+            $response->code=400;
+            $response->errors=$errors;
+            return $response;
+        }
+
+        $class_details=UserClass::where('user_id',$this->user_id)
+            ->where('id',$class_id)->first();
+
+        $response->class=$class_details;
+        return $response;
+
+    }
 
     private function get_students_helper($class_id)
     {

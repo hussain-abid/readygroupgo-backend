@@ -41,6 +41,7 @@ Route::group([
 ], function ($router) {
 
     Route::get('/classes', [ClassesController::class, 'get_classes']);
+    Route::get('/class/{class_id}', [ClassesController::class, 'get_single_class']);
     Route::get('/class-details/{class_id}', [ClassesController::class, 'get_students']);
 
     Route::put('/add-class', [ClassesController::class, 'add_class']);
