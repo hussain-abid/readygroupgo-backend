@@ -33,6 +33,16 @@ class ClassesController extends Controller
         return $result;
     }
 
+    private function is_this_user_shareable_id($shareable_id){
+
+        $result=UserClass::where('shareable_id',$shareable_id)
+            ->where('user_id',$this->user_id)
+            ->first();
+
+        return $result;
+    }
+
+
 
     public function get_classes(){
 
@@ -382,13 +392,12 @@ class ClassesController extends Controller
 
     }
 
-    public function generate_sharable_group(Request $request){
+    public function save_sharable_group($shareable_id,Request $request){
 
         $response=(object)[];
 
 
         $validator = Validator::make($request->all(), [
-            "shareable_id"    => "required",
             "students"    => "required|array",
             "students.*"  => "required|",
         ]);
@@ -401,13 +410,13 @@ class ClassesController extends Controller
         }
 
 
-        $valid_class=$this->is_this_user_class($request->get('class_id'));
+        $valid_sharable_id=$this->is_this_user_shareable_id($shareable_id);
 
-        if(!$valid_class)
+        if(!$valid_sharable_id)
         {
 
             $errors=[
-                'errors'=>['This Class Doesn\'t belongs to this user']
+                'errors'=>['This Shareable ID Doesn\'t belongs to this user'],
             ];
             $response->code=400;
             $response->errors=$errors;
@@ -416,9 +425,9 @@ class ClassesController extends Controller
 
 
         $created=UserSharedClasses::updateOrCreate([
-            'shareable_id'=>$request->get('shareable_id'),
+            'shareable_id'=>$shareable_id,
         ],[
-            'students'=>$request->get('students'),
+            'students'=>json_encode($request->get('students')),
         ]);
 
         if($created)
@@ -428,5 +437,32 @@ class ClassesController extends Controller
         }
 
         return response()->json($response, 400);
+    }
+
+    public function get_sharable_group($shareable_id){
+
+        $response=(object)[];
+
+        $valid_sharable_id=$this->is_this_user_shareable_id($shareable_id);
+
+        $shared=UserSharedClasses::where('shareable_id',$shareable_id)->first();
+        $class_details=UserClass::where('shareable_id',$shareable_id)->first();
+
+        if($shared){
+            $shared->students=json_decode($shared->students);
+            $response->group=$shared;
+            $response->class=$class_details;
+            return response()->json($response, 200);
+        }
+        else{
+            $errors=[
+                'errors'=>['This Shareable ID Doesn\'t Exist'],
+            ];
+            $response->code=400;
+            $response->errors=$errors;
+            return response()->json($response, 400);
+        }
+
+
     }
 }
