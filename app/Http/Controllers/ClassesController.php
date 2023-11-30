@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserClass;
 use App\Models\UserClassStudents;
+use App\Models\UserSharedClasses;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -141,7 +142,8 @@ class ClassesController extends Controller
 
         $class=UserClass::create([
             'user_id'=>$this->user_id,
-            'name'=>$request->get('name')
+            'name'=>$request->get('name'),
+            'shareable_id'=>generateUniqueKey(),
         ]);
 
         if($request->has('students'))
@@ -378,5 +380,53 @@ class ClassesController extends Controller
 
         return response()->json($response, 200);
 
+    }
+
+    public function generate_sharable_group(Request $request){
+
+        $response=(object)[];
+
+
+        $validator = Validator::make($request->all(), [
+            "shareable_id"    => "required",
+            "students"    => "required|array",
+            "students.*"  => "required|",
+        ]);
+
+        if($validator->fails()){
+            $errors=[
+                'errors'=>validationErrorMessagesToArray($validator->errors())
+            ];
+            return response()->json($errors, 400);
+        }
+
+
+        $valid_class=$this->is_this_user_class($request->get('class_id'));
+
+        if(!$valid_class)
+        {
+
+            $errors=[
+                'errors'=>['This Class Doesn\'t belongs to this user']
+            ];
+            $response->code=400;
+            $response->errors=$errors;
+            return response()->json($response, 400);
+        }
+
+
+        $created=UserSharedClasses::updateOrCreate([
+            'shareable_id'=>$request->get('shareable_id'),
+        ],[
+            'students'=>$request->get('students'),
+        ]);
+
+        if($created)
+        {
+            $response->message='Successfully Saved';
+            return response()->json($response, 200);
+        }
+
+        return response()->json($response, 400);
     }
 }

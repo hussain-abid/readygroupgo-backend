@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Support\Str;
+
 
 function assets(){
     return asset('/').'public/assets/';
@@ -40,5 +42,14 @@ function get_user_id_from_token()
         return "error";
     }
     return $user->id;
+}
+
+
+function generateUniqueKey($length=10)
+{
+    // Generate a random alphanumeric key of the specified length
+    $uniqueKey = Str::random($length);
+
+    return $uniqueKey;
 }
 

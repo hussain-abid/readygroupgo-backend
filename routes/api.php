@@ -54,6 +54,10 @@ Route::group([
     Route::delete('/delete-class/{class_id}', [ClassesController::class, 'delete_class']);
 
     Route::post('/delete-students', [ClassesController::class, 'delete_students']); //its post as the delete method dont have access to the body
+
+
+    Route::put('/sharable-group', [ClassesController::class, 'generate_sharable_group']); //its post as the delete method dont have access to the body
+
 });
 
 Route::get('/php-info', function (){

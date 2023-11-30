@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_classes', function (Blueprint $table) {
+        Schema::create('user_shared_classes', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
             $table->string('shareable_id');
-            $table->string('name')->nullable();
-            $table->string('attr1')->default('Attr 1');
-            $table->string('attr2')->default('Attr 2');
-            $table->string('attr3')->default('Attr 3');
+            $table->longText('students');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_classes');
+        Schema::dropIfExists('user_shared_classes');
     }
 };
