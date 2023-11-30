@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PromptsData;
+use App\Models\UserClass;
+use App\Models\UserClassStudents;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -75,10 +77,29 @@ class AuthController extends Controller
             [
                 'password' => bcrypt($request->get('password')),
                 'email' => $request->get('email'),
-                'first_name'=>$request->get('first_name'),
-                'last_name'=>$request->get('last_name'),
+                'first_name'=>ucfirst($request->get('first_name')),
+                'last_name'=>ucfirst($request->get('last_name')),
             ]
         );
+
+        $default_names=config('readygroupgo.default_names');
+
+        $user_class=UserClass::create([
+            'user_id'=>$user->id,
+            'shareable_id'=>generateUniqueKey(),
+            'name'=>'Example Class',
+            'attr1'=>'Attr 1',
+            'attr2'=>'Attr 2',
+            'attr3'=>'Attr 3',
+        ]);
+
+        foreach ($default_names as $each)
+        {
+            UserClassStudents::create([
+                'person_name'=>$each,
+                'class_id'=>$user_class->id,
+            ]);
+        }
 
         $token = JWTAuth::fromUser($user);
 
