@@ -96,13 +96,16 @@ class InviteController extends Controller
         }
 
 
-        $invite_class=InviteClass::where('join_code',$join_id)
-            ->where('user_id',$this->user_id)->first();
+        $invite_class=InviteClass::where('join_code',$join_id)->first();
 
-        InviteClassStudent::create([
-            'invite_class_id'=>$invite_class->id,
-            'person_name'=>$request->get('person_name'),
-        ]);
+        if($invite_class){
+            InviteClassStudent::create([
+                'invite_class_id'=>$invite_class->id,
+                'person_name'=>$request->get('person_name'),
+            ]);
+        }
+
+        return response()->json($response, 200);
 
     }
 }
