@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassesController;
 use App\Http\Controllers\CustomPromptController;
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\MainCategories;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptController;
@@ -57,9 +58,14 @@ Route::group([
 
 
     Route::post('/update-sharable-group/{shareable_id}', [ClassesController::class, 'save_sharable_group']);
+
+    Route::put('/create-invite-class', [InviteController::class, 'create_invite_class']);
+    Route::get('/joined-class-students/{join_id}', [InviteController::class, 'get_invite_class_students']);
+
 });
 
 Route::get('/sharable-group/{shareable_id}', [ClassesController::class, 'get_sharable_group']);
+Route::put('/join-invite/{join_id}', [InviteController::class, 'join_invite']);
 
 
 Route::get('/php-info', function (){

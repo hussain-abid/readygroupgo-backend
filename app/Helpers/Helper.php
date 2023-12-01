@@ -53,3 +53,9 @@ function generateUniqueKey($length=10)
     return $uniqueKey;
 }
 
+function generateRandomNumber($length=7)
+{
+    $string = Str::random($length);
+
+    return $string;
+}
