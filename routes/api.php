@@ -66,6 +66,7 @@ Route::group([
 
 Route::get('/sharable-group/{shareable_id}', [ClassesController::class, 'get_sharable_group']);
 Route::put('/join-invite/{join_id}', [InviteController::class, 'join_invite']);
+Route::put('/submit-feedback', [\App\Http\Controllers\FeedbackController::class, 'give_feedback']);
 
 
 Route::get('/php-info', function (){
