@@ -53,9 +53,16 @@ function generateUniqueKey($length=10)
     return $uniqueKey;
 }
 
-function generateRandomNumber($length=7)
-{
-    $string = Str::random($length);
+//function generateRandomNumber($length=7)
+//{
+//    $string = Str::random($length);
+//
+//    return $string;
+//}
 
-    return $string;
+function generateRandomNumber($length=6) {
+    $min = pow(10, $length - 1); // Minimum value for the desired length
+    $max = pow(10, $length) - 1; // Maximum value for the desired length
+
+    return rand($min, $max);
 }
