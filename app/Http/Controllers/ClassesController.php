@@ -21,6 +21,10 @@ class ClassesController extends Controller
 
     private function get_userClasses(){
         $classes=UserClass::where('user_id',$this->user_id)->get();
+        foreach ($classes as $each_class)
+        {
+            $each_class->no_of_students=UserClassStudents::where('class_id',$each_class->id)->count();
+        }
         return $classes;
     }
 

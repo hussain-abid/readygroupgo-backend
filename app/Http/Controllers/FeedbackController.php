@@ -55,3 +55,4 @@ class FeedbackController extends Controller
         return response()->json($response, 200);
     }
 }
+
