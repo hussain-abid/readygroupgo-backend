@@ -21,7 +21,7 @@ class ClassStudentsSeeder extends Seeder
             [
                 'class_id'=>1,
                 'person_name'=>'John',
-                'attr_1'=>'A',
+                'attr_1'=>1,
                 'attr_2'=>'B',
                 'attr_3'=>'C',
             ]);
@@ -31,6 +31,59 @@ class ClassStudentsSeeder extends Seeder
             [
                 'class_id'=>1,
                 'person_name'=>'Adam',
+                'attr_1'=>1,
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Jacob',
+                'attr_1'=>3,
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Anna',
+                'attr_1'=>5,
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Mathew',
+                'attr_1'=>'',
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Wick',
+                'attr_1'=>'',
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Ash',
+                'attr_1'=>'',
+                'attr_2'=>'',
+                'attr_3'=>'',
+            ]);
+
+        UserClassStudents::create(
+            [
+                'class_id'=>1,
+                'person_name'=>'Julie',
                 'attr_1'=>'',
                 'attr_2'=>'',
                 'attr_3'=>'',
